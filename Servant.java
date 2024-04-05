@@ -37,7 +37,7 @@ public class Servant implements Runnable {
                     if (presentBag.size() > 0) {
                         int presentTag = presentBag.remove(0);
                         presentChain.add(presentTag);
-                        // out.println("Added " + presentTag + " to chain.");
+                        System.out.println("Added " + presentTag + " to chain.");
                         presentsAdded.incrementAndGet();
                     }
                 } catch (Exception e) {
@@ -51,7 +51,7 @@ public class Servant implements Runnable {
                 int tag = presentChain.peek();
                 if (tag != Integer.MAX_VALUE) {
                     presentChain.remove(tag);
-                    // out.println("Wrote a thank you note for " + tag);
+                    System.out.println("Wrote a thank you note for " + tag);
                     thankYouNotes.incrementAndGet();
                 }
                 mode = "scan";
@@ -60,9 +60,9 @@ public class Servant implements Runnable {
                 // as per the minotaur's request, check if a present is in the chain
                 int checkPresent = rand.nextInt(numPresents);
                 if (presentChain.contains(checkPresent)) {
-                    // out.println("Present " + checkPresent + " was found!");
+                    System.out.println("Present " + checkPresent + " was found!");
                 } else {
-                    // out.println("Present " + checkPresent + " was not found!");
+                    System.out.println("Present " + checkPresent + " was not found!");
                 }
                 mode = "add";
             }
