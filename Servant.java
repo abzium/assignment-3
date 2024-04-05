@@ -1,4 +1,3 @@
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,7 +21,6 @@ public class Servant implements Runnable {
     }
 
     public void run() {
-        PrintWriter out = new PrintWriter(System.out);
         // Alternate between adding, removing, and checking
         // Initial mode
         String mode = "add";
