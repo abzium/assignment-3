@@ -4,13 +4,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class TempReadingModule {
     public static void main(String[] args) {
-        int numHours = 5;
+        long startTime = System.currentTimeMillis();
+        int numHours = 24;
         int numThreads = 8;
         int frequency = 60;
         int topNReadings = 5;
-        int[] shared = new int[numThreads * frequency];
+        int[] temperatures = new int[numThreads * frequency];
 
-        MarsRover rover = new MarsRover(frequency, shared, numHours);
+        MarsRover rover = new MarsRover(frequency, temperatures, numHours);
         for (int hours = 0; hours < numHours; hours++) {
 
             Thread sensors[] = new Thread[numThreads];
@@ -28,21 +29,23 @@ public class TempReadingModule {
 
             rover.counter.set(0);
 
-            Report report = new Report(shared, hours, numThreads, topNReadings);
+            Report report = new Report(temperatures, hours, numThreads, topNReadings);
             report.printReport();
         }
+        long endTime = System.currentTimeMillis();
+        System.out.println("Total time: " + (endTime - startTime) + "ms");
     }
 }
 
 class MarsRover implements Runnable {
     int freq;
-    int[] shared;
+    int[] temperatures;
     int numHours;
     AtomicInteger counter;
 
-    public MarsRover(int freq, int[] shared, int numHours) {
+    public MarsRover(int freq, int[] temperatures, int numHours) {
         this.freq = freq;
-        this.shared = shared;
+        this.temperatures = temperatures;
         this.numHours = numHours;
         counter = new AtomicInteger();
     }
@@ -50,7 +53,7 @@ class MarsRover implements Runnable {
     public void run() {
         for (int i = 0; i < freq; i++) {
             int temp = getRandomTemp();
-            shared[counter.getAndIncrement()] = temp;
+            temperatures[counter.getAndIncrement()] = temp;
         }
     }
 
@@ -65,7 +68,7 @@ class Report {
 
     int numThreads;
     int hour;
-    int[] shared;
+    int[] temperatures;
     int[] lows;
     int[] highs;
     int largestDiffFrom;
@@ -75,19 +78,19 @@ class Report {
     int largestDiffSecond;
     int topNReadings;
 
-    public Report(int[] shared, int hour, int numThreads, int topNReadings) {
+    public Report(int[] temperatures, int hour, int numThreads, int topNReadings) {
 
         this.hour = hour;
         this.numThreads = numThreads;
-        this.shared = shared;
+        this.temperatures = temperatures;
         this.topNReadings = topNReadings;
 
         largestDiff = 0;
 
-        for (int i = 0; i < shared.length; i++) {
-            for (int j = i; j < shared.length && j < i + 10; j++) {
-                int firstReading = shared[i];
-                int secondReading = shared[j];
+        for (int i = 0; i < temperatures.length; i++) {
+            for (int j = i; j < temperatures.length && j < i + 10; j++) {
+                int firstReading = temperatures[i];
+                int secondReading = temperatures[j];
                 int diff = firstReading - secondReading;
                 if (Math.abs(diff) > largestDiff) {
                     largestDiffFrom = i % 60;
@@ -99,17 +102,17 @@ class Report {
             }
         }
 
-        Arrays.sort(shared);
-        int len = shared.length;
+        Arrays.sort(temperatures);
+        int len = temperatures.length;
 
         lows = new int[topNReadings];
         for (int i = 0; i < topNReadings; i++) {
-            lows[i] = shared[i];
+            lows[i] = temperatures[i];
         }
 
         highs = new int[topNReadings];
         for (int i = 0; i < topNReadings; i++) {
-            highs[i] = shared[len - i - 1];
+            highs[i] = temperatures[len - i - 1];
         }
 
     }

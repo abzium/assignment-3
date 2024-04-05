@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MinotaurPresents {
 
     public static void main(String[] args) {
-
+        long startTime = System.currentTimeMillis();
         int numPresents = 500000;
         int numServants = 4;
 
@@ -36,5 +36,7 @@ public class MinotaurPresents {
         System.out.println("\n --- All done! ---");
         System.out.println("Presents taken: " + addCounter);
         System.out.println("Thank you notes written: " + removeCounter);
+        long endTime = System.currentTimeMillis();
+        System.out.println("Total time: " + (endTime - startTime) + "ms");
     }
 }
